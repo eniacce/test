@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="p2sekoya:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="sekoya-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="p2sekoya:war exploded" />
+    </root>
+  </artifact>
+</component>
