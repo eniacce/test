@@ -98,88 +98,93 @@
 </head>
 <body>
 
-<div class="table-responsive">
-    <table class="table table-bordered">
-        <caption>Listing</caption>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <c:forEach items="${liste}" var="list">
-            <th scope="row">#</th>
-            <th scope="row">${list.id}</th>
-            <th scope="row">${list.name}</th>
-            <th scope="row">${list.surname}</th>
 
-        </tbody>
-        </c:forEach>
-    </table>
-</div>
+<h1>Stock Ticker</h1>
+
+<table>
+    <thead><tr><th>Code</th><th>Price</th><th>Time</th></tr></thead>
+    <tbody id="price"></tbody>
+</table>
+
+<p class="new">
+    Code: <input type="text" class="code"/>
+    Price: <input type="text" class="price"/>
+    <button class="add">Add</button>
+    <button class="remove-all">Remove All</button>
+</p>
+
 ${curUser.surname}
 
 <a href="${pageContext.request.contextPath}/student/createStudent">Create Student</a>
+<div id="connect">
+
+</div>
+<div id="disconnect"></div>
+
+<div id="response">
+
+</div>
 
 </body>
 
 </html>
 
 
-<script>
-    //Create stomp client over sockJS protocol
-    var socket = new SockJS("/stockticker/ws");
-    var stompClient = Stomp.over(socket);
-    // Render price data from server into HTML, registered as callback
-    // when subscribing to price topic
-    function renderPrice(frame) {
-        var prices = JSON.parse(frame.body);
-        $('#price').empty();
-        for(var i in prices) {
-            var price = prices[i];
-            $('#price').append(
-                    $('<tr>').append(
-                            $('<td>').html(price.code),
-                            $('<td>').html(price.price.toFixed(2)),
-                            $('<td>').html(price.timeStr)
-                    )
-            );
+
+<script type="text/javascript">
+    function setConnected(connected) {
+        document.getElementById('connect').disabled = connected;
+        document.getElementById('disconnect').disabled = !connected;
+        document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+        document.getElementById('response').innerHTML = '';
+    }
+
+    function connect() {
+        if ('WebSocket' in window){
+            console.log('Websocket supported');
+            socket = new WebSocket('ws://localhost:8080//websocket');
+
+            console.log('Connection attempted');
+
+            socket.onopen = function(){
+                console.log('Connection open!');
+                setConnected(true);
+            }
+
+            socket.onclose = function(){
+                console.log('Disconnecting connection');
+            }
+
+            socket.onmessage = function (evt)
+            {
+                var received_msg = evt.data;
+                console.log(received_msg);
+                console.log('message received!');
+                showMessage(received_msg);
+            }
+
+        } else {
+            console.log('Websocket not supported');
         }
     }
 
-    // Callback function to be called when stomp client is connected to server
-    var connectCallback = function() {
-        stompClient.subscribe('/topic/price', renderPrice);
-    };
-    // Callback function to be called when stomp client could not connect to server
-    var errorCallback = function(error) {
-        alert(error.headers.message);
-    };
-    // Connect to server via websocket
-    stompClient.connect("guest", "guest", connectCallback, errorCallback);
+    function disconnect() {
+        setConnected(false);
+        console.log("Disconnected");
+    }
 
-    // Register handler for add button
-    $(document).ready(function() {
-        $('.add').click(function(e){
-            e.preventDefault();
-            var code = $('.new .code').val();
-            var price = Number($('.new .price').val());
-            var jsonstr = JSON.stringify({ 'code': code, 'price': price });
-            stompClient.send("/app/addStock", {}, jsonstr);
-            return false;
-        });
-    });
+    function sendName() {
+        var message = document.getElementById('message').value;
+        socket.send(JSON.stringify({ 'message': message }));
+    }
 
-    // Register handler for remove all button
-    $(document).ready(function() {
-        $('.remove-all').click(function(e) {
-            e.preventDefault();
-            stompClient.send("/app/removeAllStocks");
-            return false;
-        });
-    });
+    function showMessage(message) {
+        var response = document.getElementById('response');
+        var p = document.createElement('p');
+        p.style.wordWrap = 'break-word';
+        p.appendChild(document.createTextNode(message));
+        response.appendChild(p);
+    }
+
 </script>
+

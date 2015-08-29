@@ -30,6 +30,17 @@ public class Student implements Serializable  {
     @Transient
     private boolean updateControl;
 
+    @Transient
+    private boolean createdControl;
+
+
+    public boolean isCreatedControl() {
+        return createdControl;
+    }
+
+    public void setCreatedControl(boolean createdControl) {
+        this.createdControl = createdControl;
+    }
 
     public String getUrl() {
         return url;

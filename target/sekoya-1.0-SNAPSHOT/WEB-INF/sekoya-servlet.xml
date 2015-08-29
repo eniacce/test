@@ -10,7 +10,7 @@
 http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
-    <import resource="spring-quartz.xml"/>
+    <!--<import resource="spring-quartz.xml"/>-->
     <context:component-scan base-package="com.sekoya"/>
     <context:annotation-config/>
 
@@ -18,6 +18,9 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.
     <aop:aspectj-autoproxy>
         <aop:include name='insertListener'/>
     </aop:aspectj-autoproxy>
+
+
+    <!--<bean id="websocket" class="com.sekoya.websocketListener.StudentWebSocketListener"/>-->
 
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
@@ -28,12 +31,7 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.
         </property>
     </bean>
 
-    <websocket:message-broker application-destination-prefix="/app">
-        <websocket:stomp-endpoint path="/ws">
-            <websocket:sockjs/>
-        </websocket:stomp-endpoint>
-        <websocket:simple-broker prefix="/topic"/>
-    </websocket:message-broker>
+
 
 
     <!-- Configure bean to convert JSON to POJO and vice versa -->

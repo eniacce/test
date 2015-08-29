@@ -33,8 +33,7 @@ public class UserController {
         model.addAttribute("userList",users);
 
 
-
-        return "userList";
+        return "index";
 
     }
 
@@ -43,8 +42,8 @@ public class UserController {
     public String login(Model model,HttpSession session){
         String pass="e10adc3949ba59abbe56e057f20f883e";
         String username="aygun";
-        User user = userService.getById(username,pass);
-        session.setAttribute("curUser",user);
+        User user = userService.getById(username, pass);
+        session.setAttribute("curUser", user);
 
 
 
@@ -53,6 +52,17 @@ public class UserController {
         return "userList";
 
     }
+
+
+//    @MessageMapping("/userResponse")
+//    @SendTo("/userBroker/response")
+//    public UserResponse response() throws Exception {
+//        Thread.sleep(3000); // simulated delay
+//        UserResponse response =new UserResponse();
+//        response.setData(userService.userListService());
+//        response.setStatus("OK");
+//        return response;
+//    }
 
 
 
